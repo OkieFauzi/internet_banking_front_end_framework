@@ -57,3 +57,10 @@ const user_id = getUser();
 user_id.then((id) => {
     getName(id)
 })
+
+//currency formatter
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 2
+  })

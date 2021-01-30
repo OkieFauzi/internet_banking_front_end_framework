@@ -146,7 +146,7 @@
                 <i class="align-middle" data-feather="settings"></i>
               </a>
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown">
-                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded mr-1" alt="Charles Hall" /> <span class="text-dark" id="user_name"></span>
+                <img src="img/avatars/avatar-7.png" class="avatar img-fluid rounded mr-1" alt="Charles Hall" /> <span class="text-dark" id="user_name"></span>
               </a>
 							<div class="dropdown-menu dropdown-menu-right">
 								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
@@ -189,7 +189,7 @@
 							<div class="card flex-fill">
 								<div class="card-header">
 
-									<h5 class="card-title mb-0">Latest Projects</h5>
+									<h5 class="card-title mb-0">Deposit Accounts and Savings</h5>
 								</div>
 								<table class="table table-hover my-0">
 									<thead>
@@ -197,66 +197,10 @@
 											<th>Account Id</th>
 											<th class="d-none d-xl-table-cell">Balance</th>
 											<th>Status</th>
-											<th class="d-none d-md-table-cell"></th>
+											<th class="d-none d-md-table-cell">History</th>
 										</tr>
 									</thead>
-									<tbody>
-										<tr>
-											<td>Project Apollo</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Fireball</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-danger">Cancelled</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project Hades</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Nitro</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">Vanessa Tucker</td>
-										</tr>
-										<tr>
-											<td>Project Phoenix</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
-										<tr>
-											<td>Project X</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Sharon Lessman</td>
-										</tr>
-										<tr>
-											<td>Project Romeo</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-success">Done</span></td>
-											<td class="d-none d-md-table-cell">Christina Mason</td>
-										</tr>
-										<tr>
-											<td>Project Wombat</td>
-											<td class="d-none d-xl-table-cell">01/01/2020</td>
-											<td class="d-none d-xl-table-cell">31/06/2020</td>
-											<td><span class="badge bg-warning">In progress</span></td>
-											<td class="d-none d-md-table-cell">William Harris</td>
-										</tr>
+									<tbody id="account-table">
 									</tbody>
 								</table>
 							</div>
@@ -273,7 +217,7 @@
 					<div class="row text-muted">
 						<div class="col-6 text-left">
 							<p class="mb-0">
-								<a href="index.html" class="text-muted"><strong>AdminKit Demo</strong></a> &copy;
+								<a href="index.html" class="text-muted"><strong>Makers Internet Banking</strong></a> &copy;
 							</p>
 						</div>
 						<div class="col-6 text-right">
@@ -304,22 +248,30 @@
 	<script>
 		// table function index
 		async function getData(id) {
+			console.log('id :', id)
 			const response = await fetch('http://127.0.0.1:5000/account/' + id)
 			const data = await response.json()
-			const tbody = document.querySelector('tbody')
+			const tbody = document.getElementById('account-table');
 			for (item of data) {
 				const tr = document.createElement('tr');
 				const account_id = document.createElement('td');
 				const balance = document.createElement('td');
+				balance.className = "d-none d-xl-table-cell";
 				const status = document.createElement('td');
 				const history = document.createElement('td');
+				history.className = "d-none d-md-table-cell";
 
 				account_id.id = `account${item.account_id}`;
 				account_id.innerHTML = `${item.account_id}`;
-				balance.innerHTML = `IDR ${item.balance}`;
-				status.innerHTML = `${item.status}`;
+				balance.innerHTML = formatter.format(item.balance);
 				history.innerHTML = `<a href="history.html?account_id=${item.account_id}&balance=${item.balance}">Get History</a>`;
 				history.id = `history_account${item.account_id}`;
+
+				if (item.status === 'active') {
+					status.innerHTML = '<span class="badge bg-success">Active</span>'
+				} else if (item.status === 'closed') {
+					status.innerHTML = '<span class="badge bg-danger">Closed</span>'
+				}
 
 				tr.append(account_id, balance, status, history);
 				tbody.appendChild(tr)

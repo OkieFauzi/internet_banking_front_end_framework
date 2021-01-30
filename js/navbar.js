@@ -53,8 +53,8 @@ async function getName(id) {
 }
 
 //call function
-const user_id = getUser();
-user_id.then((id) => {
+const userId = getUser();
+userId.then((id) => {
     getName(id)
 })
 

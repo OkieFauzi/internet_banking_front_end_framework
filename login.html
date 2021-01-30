@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V14</title>
+	<title>Login - Makers Internet Banking</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -128,40 +128,42 @@
 		let btn = document.getElementById('login');
 		let myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
         btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            //input username and password variable
+			//input username and password variable
             let tbusername = form.elements['username'].value;
             let tbpassword = form.elements['pass'].value;
-            const data = { username : tbusername, password : tbpassword}
-            //fetch api
-            fetch('http://127.0.0.1:5000/login', {
-                method: 'POST',
-                headers : {
-                    'Content-Type' : 'application/json',
-                },
-                body : JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data['status'] === 'aborted') {
-                    if (data['reason'] === "id not registered") {
-						const alertContent = document.getElementById('modal-content')
-						alertContent.innerHTML = '<strong>Id not registered</strong>'
-                        myModal.show();
-                    } else {
-						const alertContent = document.getElementById('modal-content')
-						alertContent.innerHTML = '<strong>Incorrect Password</strong>'
-                        myModal.show();
-                    }
-                } else {
-                    localStorage.setItem('token', data["token"]);
-                    console.log('Token:', localStorage.getItem('token'))
-                    window.location.href = 'index.html'
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            })
+			const data = { username : tbusername, password : tbpassword}
+			if (tbusername !== "" && tbpassword !== "") {
+				e.preventDefault();
+				//fetch api
+				fetch('http://127.0.0.1:5000/login', {
+					method: 'POST',
+					headers : {
+						'Content-Type' : 'application/json',
+					},
+					body : JSON.stringify(data),
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data['status'] === 'aborted') {
+						if (data['reason'] === "id not registered") {
+							const alertContent = document.getElementById('modal-content')
+							alertContent.innerHTML = '<strong>Id not registered</strong>'
+							myModal.show();
+						} else {
+							const alertContent = document.getElementById('modal-content')
+							alertContent.innerHTML = '<strong>Incorrect Password</strong>'
+							myModal.show();
+						}
+					} else {
+						localStorage.setItem('token', data["token"]);
+						console.log('Token:', localStorage.getItem('token'))
+						window.location.href = 'index.html'
+					}
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				})
+			}
         })
     </script>
 

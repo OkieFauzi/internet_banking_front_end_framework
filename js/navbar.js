@@ -2,7 +2,7 @@
 const getToken = localStorage.getItem('token');
 
 //logout function
-let logout = document.getElementById('logout');
+let logout = document.getElementById('sure-quit');
 logout.addEventListener("click", function(e) {
     e.preventDefault();
     const data = {token : getToken}
@@ -23,6 +23,8 @@ logout.addEventListener("click", function(e) {
         console.error('Error:', error);
     })
 })
+
+
 
 //function = get user_id
 async function getUser() {
@@ -64,3 +66,5 @@ const formatter = new Intl.NumberFormat('en-US', {
     currency: 'IDR',
     minimumFractionDigits: 2
   })
+
+

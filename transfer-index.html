@@ -11,13 +11,14 @@
 
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 
-	<title>Makers Internet banking</title>
+	<title>Transfer | Makers Internet Banking</title>
 
 	<link href="css/app.css" rel="stylesheet">
 </head>
 
 <body>
 	<div class="wrapper">
+
 		<!--SIDEBAR-->
 		<nav id="sidebar" class="sidebar">
 			<div class="sidebar-content js-simplebar">
@@ -30,13 +31,13 @@
 						Pages
 					</li>
 
-					<li class="sidebar-item active">
+					<li class="sidebar-item">
 						<a class="sidebar-link" href="index.html">
               <i class="align-middle" data-feather="book"></i> <span class="align-middle">Home</span>
             </a>
 					</li>
 
-					<li class="sidebar-item">
+					<li class="sidebar-item active">
 						<a class="sidebar-link" href="pages-blank.html">
               <i class="align-middle" data-feather="credit-card"></i> <span class="align-middle">Transfer</span>
             </a>
@@ -46,9 +47,9 @@
 			</div>
 		</nav>
 
-		<!--NAVIGATION BAR-->
-		<!--hamburger bar-->
+		
 		<div class="main">
+			<!--NAVBAR-->
 			<nav class="navbar navbar-expand navbar-light navbar-bg">
 				<a class="sidebar-toggle d-flex">
           <i class="hamburger align-self-center"></i>
@@ -106,41 +107,61 @@
 					<!--header-->
 					<div class="row mb-2 mb-xl-3">
 						<div class="col-auto d-none d-sm-block">
-							<h3><strong>Transaction</strong> History</h3>
+							<h3><strong>Transfer</strong></h3>
 						</div>
 						<!--breadcrumbs-->
 						<div class="col-auto ml-auto text-right mt-n1">
 							<nav aria-label="breadcrumb">
 								<ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
-									<li class="breadcrumb-item"><a href="index.html">Home</a></li>
-									<li class="breadcrumb-item active" aria-current="page">History</li>
+									<li class="breadcrumb-item active" aria-current="page">Transfer Form</li>
 								</ol>
 							</nav>
 						</div>
 					</div>
-					
-					
-					<!--Table History Content content-->
-					<div class="col-12 col-xl-10">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 id="account-info"></h3>
-                                <h4 id="balance-info"></h4>
-                            </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th style="width:40%;">Datetime</th>
-                                        <th style="width:25%">Type of Transaction</th>
-                                        <th class="d-none d-md-table-cell" style="width:25%">Amount</th>
-                                        <th>Beneficiaries Account</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
+
+					<div class="row">
+						<div class="col-9">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title">Transfer Form</h5>
+									<h6 class="card-subtitle text-muted">Input your source account, destination account, and amount to transfer.</h6>
+								</div>
+								<div class="card-body">
+									<form>
+										<div class="mb-3 row">
+											<label class="col-form-label col-sm-3 text-sm-right">Source Account</label>
+											<div class="col-sm-9">
+												<select class="form-control mb-3">
+													<option selected>Open this select account</option>
+													<option>One</option>
+													<option>Two</option>
+													<option>Three</option>
+												  </select>
+											</div>
+										</div>
+										<div class="mb-3 row">
+											<label class="col-form-label col-sm-3 text-sm-right">Destination Account</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" placeholder="Input your destination account">
+											</div>
+										</div>
+										<div class="mb-3 row">
+											<label class="col-form-label col-sm-3 text-sm-right">Amount</label>
+											<div class="col-sm-9">
+												<input type="text" class="form-control" placeholder="Input your amount to transfer">
+											</div>
+										</div>
+										<div class="mb-3 row">
+											<div class="col-sm-9 ml-sm-auto">
+												<button type="submit" class="btn btn-primary">Continue</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
 
 				</div>
 			</main>
@@ -177,44 +198,8 @@
 	</div>
 
 	<script src="js/app.js"></script>
+	<script src="js/navbar.js"></script>
 
-    <script src="js/navbar.js"></script>
-    <script>
-        //get account_id and balance from query search
-        const urlParams = new URLSearchParams(window.location.search);
-        const accountId = urlParams.get('account_id');
-        const balance = urlParams.get('balance');
-        //insert history info into header
-        const info = document.getElementById('account-info');
-        const balance_info = document.getElementById('balance-info')
-        balance_info.innerHTML = `Balance : ${formatter.format(balance)}`;
-        info.innerHTML = `Account ${accountId}`
-        //get data function for history tables
-        async function getData() {
-            const response = await fetch(`http://127.0.0.1:5000/transaction/history/${accountId}`)
-            const data = await response.json()
-            const tbody = document.querySelector('tbody')
-            for (item of data) {
-                const tr = document.createElement('tr');
-                const datetime = document.createElement('td');
-                const type_of_transaction = document.createElement('td');
-                const transCapt =  item.type_of_transaction.charAt(0).toUpperCase() + item.type_of_transaction.slice(1);
-                const amount = document.createElement('td');
-                amount.className = "d-none d-md-table-cell";
-                const beneficaries = document.createElement('td');
-
-                datetime.innerHTML = `${item.datetime}`;
-                type_of_transaction.innerHTML = `${transCapt}`;
-                amount.innerHTML = formatter.format(item.amount);
-                beneficaries.innerHTML = `${item.destination}`;
-
-                tr.append(datetime, type_of_transaction, amount, beneficaries);
-                tbody.appendChild(tr)
-                }
-                console.log(data)
-        }
-        //call the function
-        getData();
-    </script>
 </body>
+
 </html>

@@ -11,11 +11,9 @@
 
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 
-	<title>Transfer | Makers Internet Banking</title>
+	<title>Receipt | Makers Internet Banking</title>
 
 	<link href="css/app.css" rel="stylesheet">
-	
-	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 
 <body>
@@ -103,76 +101,65 @@
 			</div>
 			<!-- END primary modal -->
 
-			<!--Alert Modal-->
-			<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title"><strong>Confirmation</strong></h4>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-<span aria-hidden="true">&times;</span>
-</button>
-						</div>
-						<div class="modal-body m-3">
-							<h4 id="alert-content" class="mb-0"></h4>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- END alert modal -->
-
 			<!--MAIN CONTENT-->
 			<main class="content">
 				<div class="container-fluid p-0">
 					<!--header-->
 					<div class="row mb-2 mb-xl-3">
 						<div class="col-auto d-none d-sm-block">
-							<h3><strong>Transfer</strong></h3>
+							<h3>Receipt</h3>
 						</div>
 						<!--breadcrumbs-->
 						<div class="col-auto ml-auto text-right mt-n1">
 							<nav aria-label="breadcrumb">
 								<ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
-									<li class="breadcrumb-item active" aria-current="page">Transfer Form</li>
+                                    <li class="breadcrumb-item"><a href="transfer-index.html">Transfer Form</a></li>
+                                    <li class="breadcrumb-item">Confirmation</li>
+									<li class="breadcrumb-item active" aria-current="page">Receipt</li>
 								</ol>
 							</nav>
 						</div>
 					</div>
 
-
+					<!--Table Card-->
 					<div class="row">
 						<div class="col-9">
 							<div class="card">
-								<div class="card-header">
-									<h5 class="card-title">Transfer Form</h5>
-									<h6 class="card-subtitle text-muted">Input your source account, destination account, and amount to transfer.</h6>
-								</div>
 								<div class="card-body">
-									<form id="transfer">
+									<form id="validation">
 										<div class="mb-3 row">
-											<label class="col-form-label col-sm-3 text-sm-right">Source Account</label>
+											<p class="col-sm-3 text-sm-right">Transaction Status</p>
 											<div class="col-sm-9">
-												<select class="form-control mb-3" id="account_source"></select>
+												<p id="transaction_status"></p>
 											</div>
 										</div>
 										<div class="mb-3 row">
-											<label class="col-form-label col-sm-3 text-sm-right">Destination Account</label>
+											<p class="col-sm-3 text-sm-right">Transfer From</p>
 											<div class="col-sm-9">
-												<input name="destination" type="number" class="form-control" placeholder="Input your destination account">
+												<p id="source"></p>
+                                            </div>
+										</div>
+										<div class="mb-3 row">
+											<p class="col-sm-3 text-sm-right">Transfer To</p>
+											<div class="col-sm-9">
+												<p id="destination"></p>
 											</div>
 										</div>
 										<div class="mb-3 row">
-											<label class="col-form-label col-sm-3 text-sm-right">Amount</label>
+											<p class="col-sm-3 text-sm-right">Amount</p>
 											<div class="col-sm-9">
-												<input name="amount" type="number" class="form-control" placeholder="Input your amount to transfer">
+												<p id="amount"></p>
+											</div>
+										</div>
+										<div class="mb-3 row">
+											<p class="col-sm-3 text-sm-right">Date and Time</p>
+											<div class="col-sm-9">
+												<p id="datetime"></p>
 											</div>
 										</div>
 										<div class="mb-3 row">
 											<div class="col-sm-9 ml-sm-auto">
-												<button type="submit" class="btn btn-primary">Continue</button>
+												<button id="home-btn" type="submit" class="btn btn-primary">Home</button>
 											</div>
 										</div>
 									</form>
@@ -216,80 +203,64 @@
 	</div>
 
 	<script src="js/app.js"></script>
-	<script src="js/navbar.js"></script>
-	<script>
-		//input account active to account source function
-		async function getData(id) {
-			console.log(id)
-			const response = await fetch('http://127.0.0.1:5000/account/' + id)
-			const data = await response.json();
-			for (item of data) {
-				if (item.status === 'active') {
-					const option = document.createElement('option');
-					const account_source = document.getElementById('account_source');
-					option.value = `${item.account_id},${item.balance}`;
-					option.innerHTML = 'Account ' + item.account_id + ' - Balance ' + formatter.format(item.balance);
-					account_source.appendChild(option)
-				}
-			}
-			console.log(data)
-		}
-		//call the function
-		const user_id = getUser();
-		user_id.then((id) => {
-			getData(id)
-		})
-		//submit function
-		let form = document.getElementById('transfer');
-		form.addEventListener('submit', e => {
-			e.preventDefault();
-			const selected = document.getElementById('account_source').value;
-			const value = selected.split(",");
-			const account_id = parseInt(value[0]);
-			const balance = parseInt(value[1]);
-			const destination = form.elements['destination'].value;
-			const amount = form.elements['amount'].value;
-			console.log("destination :", destination);
-			console.log('amount :', amount);
-			//modal element declaration
-			const alertModal = document.getElementById('alert-modal');
-			const alertContent = document.getElementById('alert-content')
-			//validation
-			if (destination === "" && amount === "") {
-				alertContent.textContent = 'Please insert your destination account and amount to transfer.';
-				$('#alert-modal').modal('show');
-			} else if (destination === "") {
-				alertContent.textContent = 'Please insert your destination account.';
-				$('#alert-modal').modal('show');
-			} else if (amount === "") {
-				alertContent.textContent = 'Please insert your amount to transfer.';
-				$('#alert-modal').modal('show');
-			} else {
-				const intDestination = parseInt(destination);
-				const intAmount = parseInt(amount);
-				fetch('http://127.0.0.1:5000/account_id/' + intDestination)
-				.then(response => response.json())
-				.then(data => {
-					console.log(data)
-					if (data['status'] === 'closed') {
-						alertContent.textContent = 'Your account destination is closed';
-						$('#alert-modal').modal('show');
-					} else if ((balance - intAmount) < 50000) {
-						alertContent.textContent = 'Your balance is not sufficient';
-						$('#alert-modal').modal('show');
-					} else {
-						window.location.href = `transfer-confirmation.html?source=${account_id}&destination=${intDestination}&amount=${intAmount}`;
-					}
-				}).catch((error) => {
-					console.error('Error:', error);
-					alertContent.textContent = 'Your account destination is not registered';
-					$('#alert-modal').modal('show');
-				}) 
-			}
-			
-
-		})
-	</script>
+    <script src="js/navbar.js"></script>
+    <script>
+        //get api element from search parameter
+        const urlParams= new URLSearchParams(window.location.search);
+        const account_source = urlParams.get('source');
+        const destination = urlParams.get('destination');
+        const tbamount = urlParams.get('amount');
+        const data = {account_destination : destination, amount : tbamount}
+        //create get name funtion using api
+        async function getNames(id, table_source) {
+            //fetch data
+            const response = await fetch('http://127.0.0.1:5000/account_id/' + id);
+            const data = await response.json();
+            //get name
+            const firstName = data['first_name'].charAt(0).toUpperCase() + data['first_name'].slice(1);
+            const lastName = data['last_name'].charAt(0).toUpperCase() + data['last_name'].slice(1);
+            const fullName = firstName + " " + lastName;
+            //append to whatever it is
+            const table = document.getElementById(table_source);
+            table.textContent = ": " + fullName + ' - Account ' + id;
+        }
+        //call transfer api
+        fetch('http://127.0.0.1:5000/transaction/transfer/' + account_source, {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+            },
+            body : JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            //store result
+            const status = data['status'];
+            const account_destination = data['destination'];
+            const source = data['account_id'];
+            const datetime = data['datetime'];
+            const amount = formatter.format(data['amount']);
+            //append status to table
+            const status_table = document.getElementById('transaction_status');
+            status_table.textContent = ": " + status.charAt(0).toUpperCase() + status.slice(1);
+            //append transfer from and destination to table
+            getNames(source, 'source');
+            getNames(account_destination, 'destination');
+            //append amount to table
+            const table_amount = document.getElementById('amount');
+            table_amount.textContent = ": " + amount;
+            //append date to table
+            const table_date = document.getElementById('datetime')
+            table_date.textContent = ": " + datetime
+        })
+        //Home button
+        const homeBtn = document.getElementById('home-btn');
+        homeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = 'index.html'
+        })
+    </script>
 
 </body>
 
